@@ -17,9 +17,9 @@ pipeline {
             steps{
                     nexusArtifactUploader artifacts: [
                         [
-                            artifactId: 'simple-app', 
+                            artifactId: 'Simple-app', 
                             classifier: '', 
-                            file: 'target/Roshan-1.0.0.war', 
+                            file: 'target/Simple-app.war', 
                             type: 'war'
                         ]
                     ], 
