@@ -19,7 +19,7 @@ pipeline {
                         [
                             artifactId: 'Simple-app', 
                             classifier: '', 
-                            file: 'target/Simple-app.war', 
+                            file: 'target/Simple-app-1.0.0.war', 
                             type: 'war'
                         ]
                     ], 
