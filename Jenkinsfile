@@ -15,12 +15,12 @@ pipeline {
                         [
                             artifactId: 'simple-app', 
                             classifier: '', 
-                            file: 'target/simple-app-1.0.0.war', 
+                            file: 'target/asn-war-example-1.0.0.war', 
                             type: 'war'
                         ]
                     ], 
                     credentialsId: 'nexus3', 
-                    groupId: 'in.javahome', 
+                    groupId: 'com.javacodegeeks.examples', 
                     nexusUrl: '3.129.234.9:8081', 
                     nexusVersion: 'nexus3', 
                     protocol: 'http', 
