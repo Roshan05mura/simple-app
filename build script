@@ -1,0 +1,30 @@
+folder="docker-mendix-buildpack"
+url="https://github.com/mendix/docker-mendix-buildpack.git"
+if ! git clone "${url}" "${folder}" 2>/dev/null && [ -d "${folder}" ] ; then
+    echo "Clone failed because the folder ${folder} exists"
+fi
+
+cd docker-mendix-buildpack
+
+rm -r RapidGrant-main || true
+rm -r build || true
+
+git clone https://gitlab.com/jebrd/build.git
+cd build
+unzip RapidGrant-main.zip
+rm -r RapidGrant-main.zip || true
+rm -r Grant || true
+sudo mv RapidGrant-main Grant
+cd
+sudo cp -r /var/lib/jenkins/workspace/Build/docker-mendix-buildpack/build/Grant /var/lib/jenkins/workspace/Build/docker-mendix-buildpack/Grant
+cd /var/lib/jenkins/workspace/Build/docker-mendix-buildpack
+
+
+IMAGE="gopirapid07/hr:$BUILD_NUMBER" 
+
+
+sudo docker build --build-arg BUILD_PATH="Grant" -t $IMAGE .
+
+sudo docker push $IMAGE
+
+sudo docker rmi $IMAGE
