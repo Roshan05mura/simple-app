@@ -1,0 +1,64 @@
+$ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+ 
+
+$ sudo chmod +x /usr/local/bin/docker-compose
+
+ 
+
+$ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+ 
+
+$ docker-compose --version
+
+docker-compose version 1.24.1, build 4667896b
+
+
+
+
+
+HARBORVERSION=$(curl -s https://github.com/goharbor/harbor/releases/latest/download 2>&1 | grep -Po [0-9]+\.[0-9]+\.[0-9]+)
+curl -s https://api.github.com/repos/goharbor/harbor/releases/latest | grep browser_download_url | grep online | cut -d '"' -f 4 | wget -qi -
+tar xvf harbor-online-installer-v$HARBORVERSION.tgz
+cd harbor
+
+
+mkdir certs
+cd certs
+
+openssl genrsa -out ca.key 4096
+
+openssl req -x509 -new -nodes -sha512 -days 3650 \
+ -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=reg.mendix.io" \
+ -key ca.key \
+ -out ca.crt
+
+openssl genrsa -out reg.mendix.io.key 4096
+
+openssl req -sha512 -new \
+    -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=reg.mendix.io" \
+    -key reg.mendix.io.key \
+    -out reg.mendix.io.csr
+
+cat > v3.ext <<-EOF
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1=reg.mendix.io
+EOF
+
+openssl x509 -req -sha512 -days 3650 \
+    -extfile v3.ext \
+    -CA ca.crt -CAkey ca.key -CAcreateserial \
+    -in reg.mendix.io.csr \
+    -out reg.mendix.io.crt
+
+
+cp  harbor.yml.tmpl harbor.yml
+
+
+vi harbor.yaml
