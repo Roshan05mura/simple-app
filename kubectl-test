@@ -1,0 +1,109 @@
+# hello-kubernetes.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mendix-app-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: mendix-k8s
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mendix-um-k8s
+  labels:
+    app: mendix-k8s
+spec:
+  serviceName: mendix-app-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mendix-k8s
+  template:
+    metadata:
+      labels:
+        app: mendix-k8s
+    spec:
+      containers:
+        - name: mendix-app
+          image: 
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: data
+              mountPath: "/opt/mendix/build/data/files"
+          resources:
+            limits:
+              memory: 8Gi
+            requests:
+              memory: 4Gi
+          env:
+            - name: ADMIN_PASSWORD
+              value: 'Mendix!1'
+            - name: ADMIN_USER
+              value: 'MxAdmin'
+            - name: DEBUGGER_PASSWORD
+              value: 'UMmendix@123'   
+              # valueFrom:
+              #   secretKeyRef:
+              #     name: mendix-app-secrets
+              #     key: admin-password
+            - name: DATABASE_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: mendix-app-secrets
+                  key: db-endpoint
+            - name: LICENSE_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mendix-app-secrets
+                  key: license-id
+            - name: LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mendix-app-secrets
+                  key: license-key
+            - name: MXRUNTIME_DatabaseType
+              value: "sqlserver"
+            - name: MXRUNTIME_DatabaseUserName
+              value: "sa"
+            - name: MXRUNTIME_DatabasePassword
+              value: ""
+            - name: MXRUNTIME_DatabaseName
+              value: ""   
+            - name: MXRUNTIME_DatabaseJdbcUrl
+              value: "jdbc:sqlserver://:1433;databaseName=Mendix2?user=sa&password="                                 
+      imagePullSecrets:
+        - name: regcred            
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: mysqlpvc
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: hello-kubernetes
+# spec:
+#   replicas: 2
+#   selector:
+#     matchLabels:
+#       app: hello-kubernetes
+#   template:
+#     metadata:
+#       labels:
+#         app: hello-kubernetes
+#     spec:
+#       containers:
+#       - name: hello-kubernetes
+#         image: paulbouwer/hello-kubernetes:1.8
+#         ports:
+#         - containerPort: 8080
+
