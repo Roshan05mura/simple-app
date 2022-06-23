@@ -4,10 +4,11 @@ kind: Service
 metadata:
   name: mendix-app-service
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
   - port: 8080
     targetPort: 8080
+    nodePort: 30005
   selector:
     app: mendix-k8s
 ---
