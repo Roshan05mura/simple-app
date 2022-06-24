@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
    name: mypv
 spec: 
-  storageClassName: local-storage
+  storageClassName: local-ssd
   capacity:
     storage: 5Gi
   accessModes:
@@ -16,7 +16,7 @@ kind: PersistentVolumeClaim
 metadata:
    name: mysqlpvc
 spec:
-   storageClassName: local-storage
+   storageClassName: local-ssd
    accessModes:
      - ReadWriteOnce
    resources:
