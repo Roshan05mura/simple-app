@@ -1,0 +1,8 @@
+USER="pat"
+PASS="7Lyo1be9poHEG8sAEtpqgSGD81XtVvUoK6BbAbZPWHDHttNWNaH216qR2QDfAjTqBe3LRihciiokT3vegi6SzsJKoR2gBxqxq2BZ"
+URL="6572fd6e-056a-4904-ab26-5eb00285ef65"
+
+
+git clone https://$USER:$PASS@git.api.mendix.com/$URL.git
+
+sudo mv $URL morocco
