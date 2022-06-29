@@ -31,3 +31,7 @@ sudo docker rmi $IMAGE
 
 WEB_IMAGE_NAME="${ACR_LOGINSERVER}/mendix-app:${BUILD_NUMBER}"
 kubectl set image statefulset/mendix-doh-k8s mendix-app=$WEB_IMAGE_NAME -n ingress-nginx
+
+
+
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
