@@ -16,7 +16,6 @@ docker-compose version 1.24.1, build 4667896b
 
 
 
-
 HARBORVERSION=$(curl -s https://github.com/goharbor/harbor/releases/latest/download 2>&1 | grep -Po [0-9]+\.[0-9]+\.[0-9]+)
 curl -s https://api.github.com/repos/goharbor/harbor/releases/latest | grep browser_download_url | grep online | cut -d '"' -f 4 | wget -qi -
 tar xvf harbor-online-installer-v$HARBORVERSION.tgz
@@ -62,3 +61,21 @@ cp  harbor.yml.tmpl harbor.yml
 
 
 vi harbor.yaml
+
+Update these values in the file
+
+hostname   set any ‘hostname e.g reg.mendix.io’
+certificate    path to certificate file generated above
+private_key path to private key file generated above
+
+Now install
+sudo  ./install.sh 
+
+Update /etc/host file on all kubernetes hosts and add following value
+<ip of registry node> reg.mendix.io
+
+
+Registry CA
+1.	mkdir -p /etc/docker/certs.d/<registry address>
+2.	openssl s_client -showcerts -connect <registry_address>:<registry_port> < /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /etc/docker/certs.d/<registry_address>/ca.crt
+
